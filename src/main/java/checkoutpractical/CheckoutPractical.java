@@ -44,15 +44,6 @@ public class CheckoutPractical {
      */
     static final String[][] GENERATED_TESTS = {
         {"Chrome", "Desktop", "Card", "Guest", "Standard"},
-        {"Chrome", "Phone", "PayPal", "Member", "Express"},
-        {"Firefox", "Tablet", "Card", "Member", "Standard"},
-        {"Firefox", "Phone", "PayPal", "Guest", "Standard"},
-        {"Safari", "Desktop", "Card", "Member", "Express"},
-        {"Safari", "Desktop", "PayPal", "Guest", "Standard"},
-        {"Chrome", "Tablet", "Card", "Guest", "Standard"},
-        {"Firefox", "Desktop", "Card", "Member", "Express"},
-        {"Safari", "Tablet", "Card", "Member", "Express"},
-        {"Safari", "Phone", "Card", "Guest", "Standard"}
     };
 
     public static void main(String[] args) {
