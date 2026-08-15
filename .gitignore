@@ -1,8 +1,11 @@
-# Gradle
-.gradle/
-build/
-bin/
-!gradle/wrapper/gradle-wrapper.jar
+# Compiled classes
+*.class
+
+# Randoop (downloaded jar + generated test output - students generate their own)
+libs/
+randoop-all-*.jar
+RegressionTest*.java
+ErrorTest*.java
 
 # IDE
 .idea/
