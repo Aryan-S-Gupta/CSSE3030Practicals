@@ -7,6 +7,21 @@ randoop-all-*.jar
 RegressionTest*.java
 ErrorTest*.java
 
+# Java PathFinder / Symbolic PathFinder
+# jpf-core & jpf-symbc are committed pre-built under jpf/ so students don't have
+# to install/build them (see run-jpf.bat). site.properties is regenerated with
+# machine-specific absolute paths every time run-jpf.bat runs, so it must never
+# be committed. The two .git/ entries guard against a stray nested-repo remnant
+# from how jpf/ was originally cloned in.
+jpf/site.properties
+jpf/jpf-core/.git/
+jpf/jpf-symbc/.git/
+Roots.jpf
+
+# Stray duplicate clone left over from setting this up - locked by the OS,
+# harmless, safe to ignore (or delete manually once the lock clears)
+/jpf-core/
+
 # IDE
 .idea/
 *.iml
