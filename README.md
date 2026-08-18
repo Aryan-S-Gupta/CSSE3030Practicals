@@ -21,39 +21,27 @@ method divide by `2*a`, which is zero.
 Symbolic PathFinder should report exactly five method summaries. Randoop's test
 counts vary because its search is random and stops after 30 seconds.
 
-## 1. Download the three tools
+## 1. Setup
 
-Run these commands from the repository root:
+Clone the repository, enter it, and run the idempotent setup script:
 
 ```sh
-cd /Users/aryansg/IdeaProjects/CSSE3030Practicals
-
-W4_TOOLS="$PWD/.week4-tools"
-mkdir -p "$W4_TOOLS"
-
-curl -fL https://corretto.aws/downloads/latest/amazon-corretto-8-aarch64-macos-jdk.tar.gz \
-  -o "$W4_TOOLS/corretto8.tar.gz"
-tar -xzf "$W4_TOOLS/corretto8.tar.gz" -C "$W4_TOOLS"
-
-curl -fL https://github.com/Z3Prover/z3/releases/download/z3-5.1.0/z3-5.1.0-arm64-osx-13.3.zip \
-  -o "$W4_TOOLS/z3.zip"
-unzip -q -o "$W4_TOOLS/z3.zip" -d "$W4_TOOLS"
-
-curl -fL https://github.com/randoop/randoop/releases/download/v4.3.4/randoop-all-4.3.4.jar \
-  -o "$W4_TOOLS/randoop-all-4.3.4.jar"
+git clone https://github.com/Aryan-S-Gupta/CSSE3030Practicals.git
+cd CSSE3030Practicals
+git switch mac-test
+./setup-week4-macos.sh
 ```
 
-The `.week4-tools` directory is ignored by Git.
+If the repository is already open, run only `./setup-week4-macos.sh`. It skips
+tools that are already installed. Downloads go into the Git-ignored
+`.week4-tools` directory and do not change the system Java installation.
 
 ## 2. Run Randoop
 
 ```sh
-cd /Users/aryansg/IdeaProjects/CSSE3030Practicals
-W4_TOOLS="$PWD/.week4-tools"
-
 mkdir -p week4-results/randoop
 javac Roots.java
-java -classpath ".:$W4_TOOLS/randoop-all-4.3.4.jar" \
+java -classpath ".:.week4-tools/randoop-all-4.3.4.jar" \
   randoop.main.Main gentests \
   --testclass=Roots \
   --time-limit=30 \
@@ -84,7 +72,6 @@ Expected observations:
 the nonlinear discriminant expression.
 
 ```sh
-cd /Users/aryansg/IdeaProjects/CSSE3030Practicals
 ./run-jpf-macos.sh 2>&1 | tee week4-results/jpf-console.txt
 ```
 
@@ -124,10 +111,7 @@ in its small primitive seed pool.
 
 ## Troubleshooting
 
-- `Set JAVA8_HOME`: check that the path ends in `Contents/Home` and run
-  `"$JAVA8_HOME/bin/java" -version`; it must print `1.8.0`.
-- `Set Z3_HOME`: use the extracted Z3 `bin` directory containing both
-  `libz3.dylib` and `libz3java.dylib`.
+- `JDK 8 not found` or `Z3 not found`: run `./setup-week4-macos.sh`.
 - `ERROR: you need to turn debug option on`: use `run-jpf-macos.sh`; it compiles
   with `-g` automatically.
 - The warning about `jpf-core/build/examples` is harmless for this exercise.

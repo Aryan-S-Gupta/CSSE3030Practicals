@@ -9,11 +9,11 @@ if [ ! -x "$java8_home/bin/java" ]; then
     java8_home=$(/usr/libexec/java_home -v 1.8 2>/dev/null || true)
 fi
 if [ ! -x "$java8_home/bin/java" ] || ! "$java8_home/bin/java" -version 2>&1 | grep -q '1\.8\.0'; then
-    echo "Set JAVA8_HOME to a JDK 8 installation." >&2
+    echo "JDK 8 not found. Run ./setup-week4-macos.sh first." >&2
     exit 1
 fi
 if [ ! -f "$z3_home/libz3java.dylib" ] || [ ! -f "$z3_home/libz3.dylib" ]; then
-    echo "Set Z3_HOME to the bin directory of the macOS Z3 archive." >&2
+    echo "Z3 not found. Run ./setup-week4-macos.sh first." >&2
     exit 1
 fi
 
