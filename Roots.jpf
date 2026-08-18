@@ -1,0 +1,6 @@
+target = RootsDriver
+classpath = .
+symbolic.method = Roots.numRoots(sym#sym#sym)
+listener = gov.nasa.jpf.symbc.SymbolicListener
+search.multiple_errors = true
+symbolic.dp = z3
