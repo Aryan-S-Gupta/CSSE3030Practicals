@@ -1,117 +1,40 @@
-# CSSE3030 Week 4 on macOS
+# CSSE3030 Practical Resources
 
-This repository contains the Week 4 Part 3 exercise: run Randoop and Symbolic
-PathFinder against the faulty `Roots.numRoots` method. The setup below works on
-Apple Silicon and does not change the system-wide Java version.
+## Week 4 on Apple Silicon macOS
 
-The data-flow and hand-worked symbolic execution questions in Parts 1 and 2 are
-completed on the tutor sheet. This repository supplies the automated Part 3.
-
-## Expected result
-
-Both tools should find the same fault:
-
-```text
-Roots.numRoots(0, 0, c)
-```
-
-For any integer `c`, `a = 0` and `b = 0` make the discriminant zero and the
-method divide by `2*a`, which is zero.
-
-Symbolic PathFinder should report exactly five method summaries. Randoop's test
-counts vary because its search is random and stops after 30 seconds.
-
-## 1. Setup
-
-Clone the repository, enter it, and run the idempotent setup script:
+If you have not cloned the repository yet:
 
 ```sh
-git clone https://github.com/Aryan-S-Gupta/CSSE3030Practicals.git
+git clone --branch mac-test https://github.com/mferr11/CSSE3030Practicals.git
 cd CSSE3030Practicals
-git switch mac-test
+```
+
+From the repository root, install the required tools locally:
+
+```sh
 ./setup-week4-macos.sh
 ```
 
-If the repository is already open, run only `./setup-week4-macos.sh`. It skips
-tools that are already installed. Downloads go into the Git-ignored
-`.week4-tools` directory and do not change the system Java installation.
-
-## 2. Run Randoop
+Run Randoop:
 
 ```sh
 mkdir -p week4-results/randoop
-javac Roots.java
-java -classpath ".:.week4-tools/randoop-all-4.3.4.jar" \
+.week4-tools/amazon-corretto-8.jdk/Contents/Home/bin/javac Roots.java
+.week4-tools/amazon-corretto-8.jdk/Contents/Home/bin/java \
+  -classpath ".:.week4-tools/randoop-all-4.3.4.jar" \
   randoop.main.Main gentests \
   --testclass=Roots \
   --time-limit=30 \
   --unchecked-exception=ERROR \
-  --junit-output-dir=week4-results/randoop \
-  2>&1 | tee week4-results/randoop/randoop-console.txt
+  --junit-output-dir=week4-results/randoop
 ```
 
-Check the result:
+Run Symbolic PathFinder:
 
 ```sh
-grep -E 'Error-revealing test count|Regression test count' \
-  week4-results/randoop/randoop-console.txt
-grep -n 'Roots.numRoots(0, 0,' week4-results/randoop/ErrorTest0.java | head
+./run-jpf-macos.sh
 ```
 
-Expected observations:
-
-- `ErrorTest0.java` is created.
-- It contains calls with `a = 0` and `b = 0`.
-- Those calls are labelled as throwing `ArithmeticException`.
-- Exact regression/error counts differ between runs.
-
-## 3. Run Symbolic PathFinder
-
-`RootsDriver.java` gives JPF an entry point without changing `Roots.java`.
-`Roots.jpf` makes the three `numRoots` parameters symbolic and selects Z3 for
-the nonlinear discriminant expression.
-
-```sh
-./run-jpf-macos.sh 2>&1 | tee week4-results/jpf-console.txt
-```
-
-The launcher:
-
-- verifies that `JAVA8_HOME` really contains JDK 8;
-- fixes the downloaded Z3 library's local macOS lookup path when necessary;
-- creates a temporary JPF `site.properties` file;
-- compiles with `javac -g`; and
-- runs the committed JPF/SPF Java artifacts with the macOS Z3 library.
-
-Expected output:
-
-```text
-Roots.numRoots(-1,2147483647,2147483647)  --> Return Value: 2
-Roots.numRoots(0,-1,0)                    --> Return Value: 0
-Roots.numRoots(-1,0,0)                    --> Return Value: 1
-Roots.numRoots(0,0,0)                     --> ArithmeticException: div by 0
-Roots.numRoots(2147483647,-4,2147483647)  --> Return Value: 0
-```
-
-The particular witnesses can vary with solver versions, but there should be
-five paths and the exception witness should reduce to `a = 0, b = 0`.
-
-## 4. Fill in the practical table
-
-| Question | Randoop | Symbolic PathFinder |
-|---|---|---|
-| Tests/paths reported | Record the two counts printed by your run; they vary | 5 distinct paths |
-| Fault found? | Yes | Yes |
-| Fault-triggering input | `a = 0, b = 0`, any `c` | `a = 0, b = 0`, any `c`; witness `(0,0,0)` |
-
-For the reflection question: Symbolic PathFinder can solve a constraint such as
-`a = 37` and `b = -104`, so it should find that special input if the path is
-feasible. Default Randoop is unlikely to guess both values because they are not
-in its small primitive seed pool.
-
-## Troubleshooting
-
-- `JDK 8 not found` or `Z3 not found`: run `./setup-week4-macos.sh`.
-- `ERROR: you need to turn debug option on`: use `run-jpf-macos.sh`; it compiles
-  with `-g` automatically.
-- The warning about `jpf-core/build/examples` is harmless for this exercise.
+Symbolic PathFinder should report five paths, including an
+`ArithmeticException: div by 0` for `Roots.numRoots(0, 0, 0)`. Randoop's test
+counts may vary between runs.
